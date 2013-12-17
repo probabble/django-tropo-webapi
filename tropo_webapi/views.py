@@ -22,7 +22,7 @@ class TropoView(TropoResponseMixin, View):
     def dispatch(self, request, *args, **kwargs):
         try:
             session_engine = import_module(settings.SESSION_ENGINE)
-            tropo_session = tropo.Session(request.raw_post_data).dict
+            tropo_session = tropo.Session(request.post).dict
             session_key = tropo_session.get('id', None)
             if session_key:
                 self.session = session_engine.SessionStore(session_key)
@@ -32,7 +32,7 @@ class TropoView(TropoResponseMixin, View):
                 self.session.save()
         except:
             try:
-                self.result = tropo.Result(request.raw_post_data)
+                self.result = tropo.Result(request.post)
                 session_engine = import_module(settings.SESSION_ENGINE)
                 actions = getattr(self.result, '_actions', [])
                 if (type(actions) is dict):
